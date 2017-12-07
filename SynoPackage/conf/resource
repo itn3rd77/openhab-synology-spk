@@ -1,0 +1,13 @@
+{
+    "syslog-config": {
+        "logrotate-relpath": "etc/logrotate.d/openHAB"
+    },
+    "certificate-config": {
+        "services": [{
+            "display_name": "openHAB",
+            "display_name_i18n": "openHAB",
+            "service": "openhab"
+        }],
+        "reloader-relpath": "usr/bin/ca_reload"
+    }    
+}

@@ -1,0 +1,28 @@
+{
+    "openHAB.js":{
+        "ORG.OPENHAB.Instance":{
+            "type":"app",
+            "title":"openHAB",
+            "desc":"app:description",
+            "icon":"images\/PACKAGE_ICON_{0}.PNG",
+            "allowMultiInstance":false,
+            "allUsers":true,
+            "advanceGrantPrivilege":true,            
+            "appWindow":"ORG.OPENHAB.Manager",
+            "grantPrivilege":"all",            
+            "texts":"texts",            
+            "depend":[
+                "ORG.OPENHAB.Manager",
+                "ORG.OPENHAB.SettingPanel"
+            ]
+        },
+        "ORG.OPENHAB.Manager":{
+            "type":"lib",
+            "title":"openHAB",
+            "icon":"images\/PACKAGE_ICON_{0}.PNG",
+            "depend":[
+                "ORG.OPENHAB.SettingPanel"
+            ]
+        }
+    }
+}

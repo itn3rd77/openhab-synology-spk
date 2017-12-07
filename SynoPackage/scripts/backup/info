@@ -1,0 +1,10 @@
+{
+    "online_backup": true,
+    "external_data": [{
+        "handler_type": "built-in",
+        "handler": "share",
+        "data": [{
+            "share_name": "openHAB"
+        }]
+    }]
+}

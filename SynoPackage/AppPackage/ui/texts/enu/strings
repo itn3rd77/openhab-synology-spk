@@ -1,0 +1,13 @@
+[app]
+app_name        =   "openHAB Manager"
+app_description    =    "openHAB Manager"
+
+[main]
+http_port    =    "HTTP-Port"
+https_port    =    "HTTPS-Port"
+do_restart  =   "Restart"
+
+[message]
+err_equal_http_https    =   "HTTP and HTTPS cannot use the same port."
+form_apply              =   "Applying settings ..."
+form_apply_success      =   "Settings successfully applied."

@@ -1,0 +1,14 @@
+. /usr/syno/bin/jsoncmd
+
+bkpDataVersion=$(jget "${SYNOPKG_BKP_INPUT}" ".app_data_version")
+if [ $? -ne 0 ]
+then
+    jerr "bad data version"
+    exit 1
+fi
+
+jout_begin
+jout "result" true
+jout_end
+
+exit 0

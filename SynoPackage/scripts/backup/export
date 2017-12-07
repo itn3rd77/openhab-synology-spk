@@ -1,0 +1,25 @@
+. /usr/syno/bin/jsoncmd
+
+. $(dirname $0)/common
+
+export_path=$(jget "${SYNOPKG_BKP_INPUT}" ".temp_path")
+if [ $? -ne 0 ]
+then
+    jerr "failed to get export path"
+    exit 1
+fi
+
+# Backup openHAB userdata directory
+if [ -d ${OPENHAB_USERDATA} ]
+then
+    ${BIN_CP} -rf ${OPENHAB_USERDATA} ${export_path}/
+else
+    jerr "openHAB userdata directory is missing!"
+    exit 1
+fi
+
+jout_begin
+joutstr "app_data_version" "1.0"
+jout_end
+
+exit 0

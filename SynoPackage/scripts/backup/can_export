@@ -1,0 +1,7 @@
+. /usr/syno/bin/jsoncmd
+
+jout_begin
+jout "result" true
+jout_end
+
+exit 0

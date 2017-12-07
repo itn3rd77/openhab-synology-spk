@@ -1,0 +1,11 @@
+[{
+    "step_title": "Remove openHAB shared folder",
+    "items": [{
+        "type": "multiselect",
+        "desc": "Data will be permanently removed and cannot be recovered after the shared folder is deleted.",
+        "subitems": [{
+            "key": "pkgwizard_remove_shared_folder",
+            "desc": "Remove openHAB shared folder"
+        }]
+    }]
+}]

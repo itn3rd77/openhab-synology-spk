@@ -1,0 +1,137 @@
+#!/bin/sh
+#
+# MIT License
+#
+# Copyright (c) 2017 Ingo Theiss <ingo.theiss@i-matrixx.de>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+
+### Variable definitions
+
+# Source common definitions
+. $(dirname $0)/common
+
+# openHAB daemon name
+OPENHAB_DAEMON_NAME="karaf"
+
+# openHAB daemon
+OPENHAB_DAEMON="${PACKAGE_TARGET_LOCATION}/src/runtime/bin/${OPENHAB_DAEMON_NAME}"
+
+# openHAB logfile
+OPENHAB_LOGFILE="${PACKAGE_TARGET_LOCATION}/src/userdata/logs/openhab.log"
+
+# Required for Synology Java runtime enviroment
+. /etc/profile
+
+# Include overrides from installation wizard
+. ${OPENHAB_SYNOLOGY_ENV}
+
+### Function definitions
+
+# Function to start openHAB runtime
+do_start()
+{
+    # Start openHAB
+    ${OPENHAB_DAEMON} server >> ${OPENHAB_LOGFILE} 2>&1 &
+
+    n=0
+    # Enter loop to ensure process is running
+    while true
+    do
+        # If process is started, exit loop
+        ${OPENHAB_DAEMON} status &>/dev/null && return 0
+
+        # Process not running, sleep and wait
+        sleep 1
+        ((n++))
+
+        # After 20 seconds give up
+        if [ ${n} -eq 20 ]
+        then
+            return 4
+        fi
+    done
+    
+    return 0
+}
+
+# Function to stop openHAB runtime
+do_stop()
+{
+    ${OPENHAB_DAEMON} stop &>/dev/null
+
+    n=0
+    # Enter loop to ensure process is stopped
+    while true
+    do
+        # If process is stopped, exit loop
+        ${BIN_PIDOF} -s ${OPENHAB_DAEMON} &>/dev/null || return 0
+
+        # Process not running, sleep and wait
+        sleep 1
+        ((n++))
+
+        # After 20 seconds give up
+        if [ ${n} -eq 20 ]
+        then
+            return 4
+        fi
+    done
+
+    return 0
+}
+
+# Function to detect running status of openHAB
+get_status()
+{
+    ${OPENHAB_DAEMON} status &>/dev/null || return 3
+    return 0
+}
+
+### Main program
+
+# This script is used to start and stop the package and detect running status
+case $1 in
+    start)   
+        do_start
+        ;;
+    stop)
+        do_stop  
+        ;;
+    status)
+        get_status
+        ;;
+    killall)
+        ;;
+    restart)
+        ;;
+    log)
+        ;;
+esac
+
+# Return proper exit status for Synology DSM
+#
+#   0: package is running.
+#   1: program of package is dead and /var/run pid file exists.
+#   2: program of package is dead and /var/lock lock file exists
+#   3: package is not running
+#   4: package status is unknown
+#   150: package is broken and should be reinstalled. Please note, broken status (150) is only supported by DSM 4.2 and later.
+exit $?

@@ -1,0 +1,34 @@
+#!/bin/sh
+
+### Global package definitions
+
+# The package name
+PACKAGE_NAME="openHAB"
+
+# Package directory
+PACKAGE_LOCATION="/var/packages/openHAB"
+
+# Package scripts directory
+PACKAGE_SCRIPTS_LOCATION="${PACKAGE_LOCATION}/scripts"
+
+# Package target directory
+PACKAGE_TARGET_LOCATION="${PACKAGE_LOCATION}/target"
+
+# openHAB userdata directory
+OPENHAB_USERDATA="${PACKAGE_TARGET_LOCATION}/src/userdata"
+
+### Executable binary definitions
+
+BIN_CHMOD="/bin/chmod"
+BIN_CHOWN="/bin/chown"
+BIN_CAT="/bin/cat"
+BIN_CP="/bin/cp"
+BIN_FIND="/bin/find"
+BIN_LN="/bin/ln"
+BIN_MKDIR="/bin/mkdir"
+BIN_MV="/bin/mv"
+BIN_RM="/bin/rm"
+BIN_RMDIR="/bin/rmdir"
+BIN_SERVICETOOL="/usr/syno/bin/servicetool"
+BIN_SYNOSHARE="/usr/syno/sbin/synoshare"
+BIN_SYNOUSER="/usr/syno/sbin/synouser"

@@ -1,0 +1,20 @@
+. /usr/syno/bin/jsoncmd
+
+. $(dirname $0)/common
+
+import_path=$(jget "${SYNOPKG_BKP_INPUT}" ".temp_path")
+if [ $? -ne 0 ]
+then
+    jerr "failed to get import path"
+    exit 1
+fi
+
+# Restore openHAB userdata directory
+if [ -d ${import_path}/userdata ]
+then
+ ${BIN_CP} -rf ${import_path}/userdata/* ${OPENHAB_USERDATA}/
+fi
+
+jdone
+
+exit 0

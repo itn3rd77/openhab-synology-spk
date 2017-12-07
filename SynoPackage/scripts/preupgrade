@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# MIT License
+#
+# Copyright (c) 2017 Ingo Theiss <ingo.theiss@i-matrixx.de>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+
+# Source common definitions
+. $(dirname $0)/common
+
+# Remove cache, runtime and tmp dir
+if [ -d ${PACKAGE_TARGET_LOCATION}/userdata/tmp ]
+then
+    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/userdata/tmp
+fi
+
+if [ -d ${PACKAGE_TARGET_LOCATION}/userdata/cache ]
+then
+    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/userdata/cache
+fi
+
+if [ -d ${PACKAGE_TARGET_LOCATION}/runtime ]
+then
+    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/runtime
+fi
+
+# Remove openHAB system files
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/all.policy
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/branding.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/branding-ssh.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/config.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/custom.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/version.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/distribution.info
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/jre.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/profile.cfg
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/startup.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/org.apache.karaf*
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/org.ops4j.pax.url.mvn.cfg
+
+# Backup openHAB userdata directory
+${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/userdata ${SYNOPKG_TEMP_UPGRADE_FOLDER}/userdata
+
+exit 0

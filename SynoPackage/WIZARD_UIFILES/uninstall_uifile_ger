@@ -1,0 +1,11 @@
+[{
+    "step_title": "Löschen des gemeinsamen Ordners von openHAB",
+    "items": [{
+        "type": "multiselect",
+        "desc": "Die Daten werden dauerhaft gelöscht und können nicht wieder hergestellt werden, nachdem der gemeinsame Ordner gelöscht wurde",
+        "subitems": [{
+            "key": "pkgwizard_remove_shared_folder",
+            "desc": "Löschen des gemeinsamen Ordners von openHAB"
+        }]
+    }]
+}]
