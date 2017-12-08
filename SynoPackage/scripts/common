@@ -79,8 +79,8 @@ create_cert_keystore()
         ${BIN_JAVA_KEYTOOL} -importkeystore -noprompt -deststorepass openhab -destkeypass openhab -destkeystore ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/keystore -srckeystore ${OPENHAB_SYNOLOGY_CERT_STORE}/openhab.p12 -srcstoretype PKCS12 -srcstorepass changeit -alias mykey &>/dev/null
 
         # Update permissions
- ${BIN_CHOWN} ${PACKAGE_NAME}:${PACKAGE_NAME} ${OPENHAB_SYNOLOGY_CERT_STORE}/openhab.p12
- ${BIN_CHMOD} 400 ${OPENHAB_SYNOLOGY_CERT_STORE}/openhab.p12
+        ${BIN_CHOWN} ${PACKAGE_NAME}:${PACKAGE_NAME} ${OPENHAB_SYNOLOGY_CERT_STORE}/openhab.p12
+        ${BIN_CHMOD} 400 ${OPENHAB_SYNOLOGY_CERT_STORE}/openhab.p12
         ${BIN_CHMOD} 640 ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/keystore
     fi
 }

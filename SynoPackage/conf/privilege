@@ -35,5 +35,8 @@
     "executable": [{
         "relpath": "ui/openhab.cgi",
         "run-as": "root"
+    },{
+        "relpath": "usr/bin/ca_reload",
+        "run-as": "root"
     }] 
 }
