@@ -26,11 +26,10 @@
 # Source spk packing functions
 . /pkgscripts/include/pkg_util.sh
 
-# PKG_DIR is a working directory.
+# PKG_DIR is a working directory
 PKG_DIR=/tmp/_tmp_spk
-rm -rf ${PKG_DIR}
-mkdir -p ${PKG_DIR}
-
+# openHAB download URL
+DOWNLOAD_URL="https://dl.bintray.com/openhab/mvn/org/openhab/distro/openhab/2.2.0/openhab-2.2.0.tar.gz"
 # Build number for INFO: version
 build_number="nnnn"
 # Build date for INFO: version
@@ -47,16 +46,18 @@ build_date="$(date +'%Y%m%d')"
 create_package_tgz() {
     local inner_tarball_dir=/tmp/_inner_tarball
 
-    # clear directory
+    # Clear directory
     rm -rf ${inner_tarball_dir} && mkdir -p ${inner_tarball_dir}
 
-    # install needed files into PKG_DIR
+    # Install needed files into PKG_DIR
     cp -av SynoPackage/AppPackage/* ${inner_tarball_dir}
 
-    wget --no-check-certificate https://openhab.ci.cloudbees.com/job/openHAB-Distribution/lastSuccessfulBuild/artifact/distributions/openhab/target/openhab-2.2.0-SNAPSHOT.tar.gz -P ${PKG_DIR}
-    tar -xvzf ${PKG_DIR}/openhab-2.2.0-SNAPSHOT.tar.gz -C ${inner_tarball_dir}/src
-    rm -f ${PKG_DIR}/openhab-2.2.0-SNAPSHOT.tar.gz
+    # Download openHAB release tarball
+    wget --no-check-certificate ${DOWNLOAD_URL} -P ${PKG_DIR}
+    tar -xvzf ${PKG_DIR}/${{DOWNLOAD_URL##*/} -C ${inner_tarball_dir}/src
+    rm -f ${PKG_DIR}/${{DOWNLOAD_URL##*/}
 
+    # Extract build number
     build_number="$(sed -n 's/.*#\([0-9]*\)/\1/p' ${inner_tarball_dir}/src/userdata/etc/version.properties)"
 
     # Create package.tgz: $1=source_dir, $2=dest_dir
@@ -95,5 +96,14 @@ create_spk(){
     pkg_make_spk ${PKG_DIR} "/image/packages" $(pkg_get_spk_family_name)
 }
 
+#
+# Start install
+#
+
+# Clean working directory
+rm -rf ${PKG_DIR}
+mkdir -p ${PKG_DIR}
+
+# Build and create package
 create_package_tgz
 create_spk
