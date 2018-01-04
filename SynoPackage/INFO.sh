@@ -6,7 +6,7 @@ build_date="$1"
 build_number="$2"
 
 package="openHAB"
-version="2.2.0-${build_number}"
+version="2.2.0-0001"
 displayname="openHAB"
 maintainer="Ingo Theiss"
 maintainer_url="https://github.com/itheiss/openhab-synology-spk"
