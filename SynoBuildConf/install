@@ -29,11 +29,9 @@
 # PKG_DIR is a working directory
 PKG_DIR=/tmp/_tmp_spk
 # openHAB download URL
-DOWNLOAD_URL="https://dl.bintray.com/openhab/mvn/org/openhab/distro/openhab/2.2.0/openhab-2.2.0.tar.gz"
+DOWNLOAD_URL="https://openhab.ci.cloudbees.com/job/openHAB-Distribution/lastSuccessfulBuild/artifact/distributions/openhab/target/openhab-2.3.0-SNAPSHOT.tar.gz"
 # Build number for INFO: version
 build_number="nnnn"
-# Build date for INFO: version
-build_date="$(date +'%Y%m%d')"
 
 #
 # The package.tgz is a compressed file containing all the files required by the applications.
@@ -89,7 +87,7 @@ create_spk(){
     cp -av SynoPackage/PACKAGE_ICON*.PNG ${PKG_DIR}
 
     # Generate INFO file
-    SynoPackage/INFO.sh "${build_date}" "${build_number}" > INFO
+    SynoPackage/INFO.sh "${build_number}" > INFO
     cp INFO ${PKG_DIR}/INFO
 
     # Create the final spk: pkg_make_spk <source path> <dest path> <spk file name>
