@@ -2,11 +2,10 @@
 
 source /pkgscripts/include/pkg_util.sh
 
-build_date="$1"
-build_number="$2"
+build_number="$1"
 
 package="openHAB"
-version="2.2.0-0002"
+version="2.3.0-${build_number}"
 displayname="openHAB"
 maintainer="Ingo Theiss"
 maintainer_url="https://github.com/itheiss/openhab-synology-spk"
@@ -17,7 +16,7 @@ adminprotocol="https"
 adminurl="/start/index"
 adminport="48443"
 install_dep_packages="Java8"
-install_replace_packages="openHAB<2.2.0"
+install_replace_packages="openHAB<2.3.0"
 helpurl="https://github.com/itheiss/openhab-synology-spk"
 silent_install="yes"
 silent_upgrade="yes"
