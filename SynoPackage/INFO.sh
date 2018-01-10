@@ -25,6 +25,6 @@ dsmuidir="ui"
 dsmappname="ORG.OPENHAB.Instance"
 description="openHAB - a vendor and technology agnostic open source automation software for your home."
 description_enu="openHAB - a vendor and technology agnostic open source automation software for your home."
-description_ger="openHAB - eine Hersteller- und technologieunabhaengige Open-Source-Automatisierungssoftware fuer Ihr Zuhause."
+description_ger="openHAB - eine Hersteller- und technologieunabhängige Open-Source-Automatisierungssoftware für Ihr Zuhause."
 [ "$(caller)" != "0 NULL" ] && return 0
 pkg_dump_info
