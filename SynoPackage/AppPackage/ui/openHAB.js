@@ -1,8 +1,8 @@
 Ext.ns("ORG.OPENHAB");
 
-ORG.OPENHAB.CGI_OPENHAB = "/webman/3rdparty/openHAB/openhab.cgi";
-ORG.OPENHAB.HTTP_PORT = "8080";
-ORG.OPENHAB.HTTPS_PORT = "8443";
+ORG.OPENHAB.CGI_OPENHAB = "/webman/3rdparty/openHAB/openHAB.cgi";
+ORG.OPENHAB.HTTP_PORT = "48080";
+ORG.OPENHAB.HTTPS_PORT = "48443";
 
 Ext.define('ORG.OPENHAB.Instance', {
     extend: 'SYNO.SDS.AppInstance',

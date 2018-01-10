@@ -68,7 +68,7 @@ fi
 
 ${BIN_LN} -sf  ${openhab_synoshare}/conf ${PACKAGE_TARGET_LOCATION}/src/conf
 
-# Set openHAB environment from ui-wizard
+# Set openHAB environment from package-wizard
 if [ "${SYNOPKG_PKG_STATUS}" == "INSTALL" ]
 then
     printf 'export OPENHAB_HTTP_PORT="%s"\n' "${pkgwizard_http_port}" > ${OPENHAB_SYNOLOGY_ENV}
@@ -78,7 +78,24 @@ then
     ${BIN_CHOWN} ${PACKAGE_NAME}:${PACKAGE_NAME} ${OPENHAB_SYNOLOGY_ENV}
 
     # Change adminport inside INFO
-    sed -i "s/adminport=\"\([0-9]*\)\"/adminport=\"${pkgwizard_https_port}\"/g" ${PACKAGE_LOCATION}/INFO
+    sed -i "s|adminport=\"\([0-9]*\)\"|adminport=\"${pkgwizard_https_port}\"|g" ${PACKAGE_LOCATION}/INFO
+
+    if [ "${pkgwizard_force_inet_addr}" == "true" ]
+    then
+        # Persist network address from wizard
+        grep -Fq "org.eclipse.smarthome.network:primaryAddress" ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
+
+        if [ $? -eq 0 ]
+        then
+            # Replace value with new value from wizard
+	    sed -i "s|org.eclipse.smarthome.network:primaryAddress = \([0-9./]*\)|org.eclipse.smarthome.network:primaryAddress = ${pkgwizard_inet_addr}|g" ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
+        else
+            # Insert network settings
+            printf "\n################ NETWORK ####################\n\n" >> ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
+            printf "# The network address used by openHAB aka listen address\n#\n" >> ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
+            printf "org.eclipse.smarthome.network:primaryAddress = %s\n" "${pkgwizard_inet_addr}" >> ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
+        fi
+    fi
 fi
 
 ### Import Synology certificates into openHAB keystore

@@ -33,7 +33,7 @@
         "run-as": "package" 
     }],
     "executable": [{
-        "relpath": "ui/openhab.cgi",
+        "relpath": "ui/openHAB.cgi",
         "run-as": "root"
     },{
         "relpath": "usr/bin/ca_reload",

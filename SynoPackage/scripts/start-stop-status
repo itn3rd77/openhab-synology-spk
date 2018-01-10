@@ -88,8 +88,8 @@ do_stop()
         sleep 1
         ((n++))
 
-        # After 20 seconds give up
-        if [ ${n} -eq 20 ]
+        # After 60 seconds give up
+        if [ ${n} -eq 60 ]
         then
             return 4
         fi
