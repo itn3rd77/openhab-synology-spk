@@ -30,10 +30,6 @@
 PKG_DIR=/tmp/_tmp_spk
 # openHAB download URL
 DOWNLOAD_URL="https://dl.bintray.com/openhab/mvn/org/openhab/distro/openhab/2.2.0/openhab-2.2.0.tar.gz"
-# Build number for INFO: version
-build_number="nnnn"
-# Build date for INFO: version
-build_date="$(date +'%Y%m%d')"
 
 #
 # The package.tgz is a compressed file containing all the files required by the applications.
@@ -57,9 +53,6 @@ create_package_tgz() {
     mkdir ${inner_tarball_dir}/src
     tar -xvzf ${PKG_DIR}/${DOWNLOAD_URL##*/} -C ${inner_tarball_dir}/src
     rm -f ${PKG_DIR}/${DOWNLOAD_URL##*/}
-
-    # Extract build number (snapshot build only)
-    build_number="$(sed -n 's/.*#\([0-9]*\)/\1/p' ${inner_tarball_dir}/src/userdata/etc/version.properties)"
 
     # Create package.tgz: $1=source_dir, $2=dest_dir
     pkg_make_inner_tarball "${inner_tarball_dir}" "${PKG_DIR}"
@@ -89,7 +82,7 @@ create_spk(){
     cp -av SynoPackage/PACKAGE_ICON*.PNG ${PKG_DIR}
 
     # Generate INFO file
-    SynoPackage/INFO.sh "${build_date}" "${build_number}" > INFO
+    SynoPackage/INFO.sh > INFO
     cp INFO ${PKG_DIR}/INFO
 
     # Create the final spk: pkg_make_spk <source path> <dest path> <spk file name>
