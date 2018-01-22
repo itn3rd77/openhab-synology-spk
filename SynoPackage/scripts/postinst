@@ -38,9 +38,9 @@ then
     ${BIN_SYNOSHARE} --add "${PACKAGE_NAME}" "" "${openhab_synoshare}" "" "" "" 0 0
     if [ $? -ne 0 ]
     then
-  logger -p 0 "${PACKAGE_NAME}: failed to create ${PACKAGE_NAME} share"
-  exit 1
- fi
+        logger -p 0 "${PACKAGE_NAME}: failed to create ${PACKAGE_NAME} share"
+        exit 1
+    fi
 fi
 
 # Add permissions
@@ -59,6 +59,16 @@ fi
 ${BIN_LN} -sf  ${openhab_synoshare}/addons ${PACKAGE_TARGET_LOCATION}/src/addons
 
 # Copy and link conf directory
+if [ -d ${openhab_synoshare}/logs ]
+then
+    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/src/userdata/logs
+else
+    ${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/userdata/logs ${openhab_synoshare}/
+fi
+
+${BIN_LN} -sf  ${openhab_synoshare}/logs ${PACKAGE_TARGET_LOCATION}/src/userdata/logs
+
+# Copy and link logs directory
 if [ -d ${openhab_synoshare}/conf ]
 then
     ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/src/conf
