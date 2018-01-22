@@ -26,20 +26,31 @@
 # Source common definitions
 . $(dirname $0)/common
 
-# Remove cache, runtime and tmp dir
-if [ -d ${PACKAGE_TARGET_LOCATION}/userdata/tmp ]
+# Remove runtime dir
+if [ -d ${PACKAGE_TARGET_LOCATION}/runtime ]
 then
-    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/userdata/tmp
+    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/runtime
 fi
 
+# Remove userdata cache, logs and tmp dir
 if [ -d ${PACKAGE_TARGET_LOCATION}/userdata/cache ]
 then
     ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/userdata/cache
 fi
 
-if [ -d ${PACKAGE_TARGET_LOCATION}/runtime ]
+if [ -d ${PACKAGE_TARGET_LOCATION}/userdata/logs ]
 then
-    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/runtime
+    if [ -L ${PACKAGE_TARGET_LOCATION}/userdata/logs ]
+    then
+        ${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/logs
+    else
+        ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/userdata/logs
+    fi
+fi
+
+if [ -d ${PACKAGE_TARGET_LOCATION}/userdata/tmp ]
+then
+    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/userdata/tmp
 fi
 
 # Remove openHAB system files
