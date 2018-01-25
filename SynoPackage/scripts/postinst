@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2017 Ingo Theiss <ingo.theiss@i-matrixx.de>
+# Copyright (c) 2018 Ingo Theiss <ingo.theiss@i-matrixx.de>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -29,22 +29,30 @@
 ### Create share for openHAB
 
 # Absolute path of the share
-openhab_synoshare="$(${BIN_SERVICETOOL} --get-first-alive-volume)/${PACKAGE_NAME}"
+openhab_synoshare="$(${BIN_SERVICETOOL} --get-alive-volume)/${PACKAGE_NAME}"
 
-# Create share
-${BIN_SYNOSHARE} --get "${PACKAGE_NAME}"
+# Check if share exists
+${BIN_SYNOSHARE} --get "${PACKAGE_NAME}" 2>&1 >/dev/null
 if [ $? -ne 0 ]
 then
+    # Create share
     ${BIN_SYNOSHARE} --add "${PACKAGE_NAME}" "" "${openhab_synoshare}" "" "" "" 0 0
     if [ $? -ne 0 ]
     then
-        logger -p 0 "${PACKAGE_NAME}: failed to create ${PACKAGE_NAME} share"
+        logger -p 0 "${PACKAGE_NAME}_${SCRIPT_NAME}: failed to create ${PACKAGE_NAME} share"
+        echo "Failed to create openHAB share!" > ${SYNOPKG_TEMP_LOGFILE}
         exit 1
     fi
-fi
 
-# Add permissions
-${BIN_SYNOSHARE} --setuser ${PACKAGE_NAME} RW + ${PACKAGE_NAME},@administrators
+    # Add permissions
+    ${BIN_SYNOSHARE} --setuser ${PACKAGE_NAME} RW + ${PACKAGE_NAME},@administrators
+    if [ $? -ne 0 ]
+    then
+        logger -p 0 "${PACKAGE_NAME}_${SCRIPT_NAME}: failed to add permissions for openHAB share."
+        echo "Failed to add permissions for openHAB share!" > ${SYNOPKG_TEMP_LOGFILE}
+	exit 2
+    fi	    
+fi
 
 ### Copy and link file to openHAB share
 
@@ -56,7 +64,7 @@ else
     ${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/addons ${openhab_synoshare}/
 fi
 
-${BIN_LN} -sf  ${openhab_synoshare}/addons ${PACKAGE_TARGET_LOCATION}/src/addons
+${BIN_LN} -sf ${openhab_synoshare}/addons ${PACKAGE_TARGET_LOCATION}/src/addons
 
 # Copy and link conf directory
 if [ -d ${openhab_synoshare}/conf ]
@@ -66,17 +74,19 @@ else
     ${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/conf ${openhab_synoshare}/
 fi
 
-${BIN_LN} -sf  ${openhab_synoshare}/conf ${PACKAGE_TARGET_LOCATION}/src/conf
+${BIN_LN} -sf ${openhab_synoshare}/conf ${PACKAGE_TARGET_LOCATION}/src/conf
 
-# Copy and link logs directory
+# Create and link logs directory
 if [ -d ${openhab_synoshare}/logs ]
 then
     ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/src/userdata/logs
 else
-    ${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/userdata/logs ${openhab_synoshare}/
+    ${BIN_MKDIR} ${openhab_synoshare}/logs
+    ${BIN_CHMOD} 775 ${openhab_synoshare}/logs
+    ${BIN_CHOWN} ${PACKAGE_NAME}:${PACKAGE_NAME} ${openhab_synoshare}/logs
 fi
 
-${BIN_LN} -sf  ${openhab_synoshare}/logs ${PACKAGE_TARGET_LOCATION}/src/userdata/logs
+${BIN_LN} -sf ${openhab_synoshare}/logs ${PACKAGE_TARGET_LOCATION}/src/userdata/logs
 
 # Set openHAB environment from package-wizard
 if [ "${SYNOPKG_PKG_STATUS}" == "INSTALL" ]
@@ -98,7 +108,7 @@ then
         if [ $? -eq 0 ]
         then
             # Replace value with new value from wizard
-	    sed -i "s|org.eclipse.smarthome.network:primaryAddress = \([0-9./]*\)|org.eclipse.smarthome.network:primaryAddress = ${pkgwizard_inet_addr}|g" ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
+            sed -i "s|org.eclipse.smarthome.network:primaryAddress = \([0-9./]*\)|org.eclipse.smarthome.network:primaryAddress = ${pkgwizard_inet_addr}|g" ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
         else
             # Insert network settings
             printf "\n################ NETWORK ####################\n\n" >> ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg

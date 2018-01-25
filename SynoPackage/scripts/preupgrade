@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2017 Ingo Theiss <ingo.theiss@i-matrixx.de>
+# Copyright (c) 2018 Ingo Theiss <ingo.theiss@i-matrixx.de>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,47 +27,45 @@
 . $(dirname $0)/common
 
 # Remove runtime dir
-if [ -d ${PACKAGE_TARGET_LOCATION}/runtime ]
-then
-    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/runtime
-fi
+${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/src/runtime
+# Remove userdata cache and tmp dir
+${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/src/userdata/cache
+${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/src/userdata/tmp
 
-# Remove userdata cache, logs and tmp dir
-if [ -d ${PACKAGE_TARGET_LOCATION}/userdata/cache ]
+# Remove symlink for logs directory
+if [ -L ${PACKAGE_TARGET_LOCATION}/src/userdata/logs ]
 then
-    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/userdata/cache
-fi
-
-if [ -d ${PACKAGE_TARGET_LOCATION}/userdata/logs ]
-then
-    if [ -L ${PACKAGE_TARGET_LOCATION}/userdata/logs ]
-    then
-        ${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/logs
-    else
-        ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/userdata/logs
-    fi
-fi
-
-if [ -d ${PACKAGE_TARGET_LOCATION}/userdata/tmp ]
-then
-    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/userdata/tmp
+    ${BIN_RM} ${PACKAGE_TARGET_LOCATION}/src/userdata/logs
+else
+    ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/src/userdata/logs
 fi
 
 # Remove openHAB system files
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/all.policy
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/branding.properties
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/branding-ssh.properties
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/config.properties
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/custom.properties
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/version.properties
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/distribution.info
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/jre.properties
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/profile.cfg
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/startup.properties
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/org.apache.karaf*
-${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/userdata/etc/org.ops4j.pax.url.mvn.cfg
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/all.policy
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/branding.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/branding-ssh.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/config.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/custom.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/custom.system.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/distribution.info
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/jre.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/org.apache.karaf*
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/org.ops4j.pax.url.mvn.cfg
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/profile.cfg
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/startup.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/system.properties
+${BIN_RM} -f ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/version.properties
+
+# Keep a backup in case the user modified logging configuration
+${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/org.ops4j.pax.logging.cfg ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/org.ops4j.pax.logging.cfg.spk
 
 # Backup openHAB userdata directory
 ${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/userdata ${SYNOPKG_TEMP_UPGRADE_FOLDER}/userdata
+if [ $? -ne 0 ]
+then
+    logger -p 0 "${PACKAGE_NAME}_${SCRIPT_NAME}: failed to backup openHAB userdata!"
+    echo "Failed to backup openHAB userdate directory!" > ${SYNOPKG_TEMP_LOGFILE}
+    exit 1
+fi
 
 exit 0

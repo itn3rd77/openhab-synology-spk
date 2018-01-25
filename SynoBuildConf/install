@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2017 Ingo Theiss <ingo.theiss@i-matrixx.de>
+# Copyright (c) 2018 Ingo Theiss <ingo.theiss@i-matrixx.de>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,9 @@
 . /pkgscripts/include/pkg_util.sh
 
 # PKG_DIR is a working directory
-PKG_DIR=/tmp/_tmp_spk
+PKG_DIR="/tmp/_spk.tmp"
+# Download cache directory
+DOWNLOAD_CACHE_DIR="/tmp/_cache.tmp"
 # openHAB download URL
 DOWNLOAD_URL="https://openhab.ci.cloudbees.com/job/openHAB-Distribution/lastSuccessfulBuild/artifact/distributions/openhab/target/openhab-2.3.0-SNAPSHOT.tar.gz"
 # Build number for INFO: version
@@ -47,14 +49,20 @@ create_package_tgz() {
     # Clear directory
     rm -rf ${inner_tarball_dir} && mkdir ${inner_tarball_dir}
 
-    # Install needed files into PKG_DIR
-    cp -av SynoPackage/AppPackage/* ${inner_tarball_dir}
-
     # Download openHAB release tarball
-    wget --no-check-certificate --no-verbose ${DOWNLOAD_URL} -P ${PKG_DIR}
+    if [ ! -f ${DOWNLOAD_CACHE_DIR}/${DOWNLOAD_URL##*/} ]
+    then
+        wget --no-check-certificate --no-verbose ${DOWNLOAD_URL} -P ${DOWNLOAD_CACHE_DIR}
+    fi
+
     mkdir ${inner_tarball_dir}/src
-    tar -xvzf ${PKG_DIR}/${DOWNLOAD_URL##*/} -C ${inner_tarball_dir}/src
-    rm -f ${PKG_DIR}/${DOWNLOAD_URL##*/}
+    tar -xvzf ${DOWNLOAD_CACHE_DIR}/${DOWNLOAD_URL##*/} -C ${inner_tarball_dir}/src
+
+    # Backup original openHAB release files before override
+    cp ${inner_tarball_dir}/src/userdata/etc/org.ops4j.pax.logging.cfg ${inner_tarball_dir}/src/userdata/etc/org.ops4j.pax.logging.cfg.org
+    
+    # Install files into PKG_DIR
+    cp -av SynoPackage/AppPackage/* ${inner_tarball_dir}
 
     # Extract build number (snapshot build only)
     build_number="$(sed -n 's/.*#\([0-9]*\)/\1/p' ${inner_tarball_dir}/src/userdata/etc/version.properties)"
@@ -102,6 +110,11 @@ create_spk(){
 # Clean working directory
 rm -rf ${PKG_DIR}
 mkdir -p ${PKG_DIR}
+
+# Create download cache directory
+mkdir -p ${DOWNLOAD_CACHE_DIR}
+# Remove files older than 10 days from the cache
+find ${DOWNLOAD_CACHE_DIR} -type f -mtime +10 -exec rm -f {} \;
 
 # Build and create package
 create_package_tgz
