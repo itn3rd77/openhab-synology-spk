@@ -12,5 +12,11 @@ A Synology DiskStation Package for [openHAB](http://www.openhab.org/) exploiting
 * Daily log rotation managed by openHAB with a custom logging configuration
 * An openHAB application integrated in Synology DSM to change the HTTP and HTTPS ports later on
 
+**openHAB directory layout**
+
+If you want to get your hands dirty and are addicted working with the command line here is the directory layout of the openHAB package on your Synology NAS:
+
+![openHAB directory layout](openhab_synopkg_layout.png)
+
 Follow the link to download the latest [openHAB packages](http://spk.i-matrixx.de/?fulllist=true). Please download the desired package manually and do **NOT** add the location as a repository.
 Feedback is highly appreciated!
