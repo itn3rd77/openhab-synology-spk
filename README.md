@@ -18,5 +18,7 @@ If you want to get your hands dirty and are addicted working with the command li
 
 ![openHAB directory layout](openhab_synopkg_layout.png)
 
+**Download Synology openHAB packages**
+
 Follow the link to download the latest [openHAB packages](http://spk.i-matrixx.de/?fulllist=true). Please download the desired package manually and do **NOT** add the location as a repository.
 Feedback is highly appreciated!
