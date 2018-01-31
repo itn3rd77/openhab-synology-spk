@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2017 Ingo Theiss <ingo.theiss@i-matrixx.de>
+# Copyright (c) 2018 Ingo Theiss <ingo.theiss@i-matrixx.de>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,22 +27,18 @@
 
 # The package name
 PACKAGE_NAME="openHAB"
-
 # Package directory
 PACKAGE_LOCATION="/var/packages/openHAB"
-
 # Package scripts directory
 PACKAGE_SCRIPTS_LOCATION="${PACKAGE_LOCATION}/scripts"
-
 # Package target directory
 PACKAGE_TARGET_LOCATION="${PACKAGE_LOCATION}/target"
-
 # openHAB certificates
 OPENHAB_SYNOLOGY_CERT_STORE="/usr/local/etc/certificate/openHAB/openhab"
-
 # openHAB environment settings from Synology DSM UI
 OPENHAB_SYNOLOGY_ENV="${PACKAGE_TARGET_LOCATION}/src/userdata/etc/synology.env"
-
+# The executed script name
+SCRIPT_NAME="${0##*/}"
 
 ### Executable binary definitions
 
@@ -65,7 +61,6 @@ BIN_SYNOPKGCTL="/usr/syno/sbin/synopkgctl"
 BIN_SYNOSHARE="/usr/syno/sbin/synoshare"
 BIN_SYNOUSER="/usr/syno/sbin/synouser"
 
-
 ### Functions
 
 create_cert_keystore()
@@ -73,10 +68,36 @@ create_cert_keystore()
     if [ -d ${OPENHAB_SYNOLOGY_CERT_STORE} ]
     then
         # Create a pkcs12 keystore with key and certificate. This step is necessary because keytool does not provide a functionality to import a private key to a keystore!
-        ${BIN_OPENSSL} pkcs12 -export -certfile ${OPENHAB_SYNOLOGY_CERT_STORE}/fullchain.pem -in ${OPENHAB_SYNOLOGY_CERT_STORE}/cert.pem -inkey ${OPENHAB_SYNOLOGY_CERT_STORE}/privkey.pem -out ${OPENHAB_SYNOLOGY_CERT_STORE}/openhab.p12 -name mykey -password pass:changeit
+        ${BIN_OPENSSL} pkcs12 \
+            -export \
+            -certfile ${OPENHAB_SYNOLOGY_CERT_STORE}/fullchain.pem \
+            -in ${OPENHAB_SYNOLOGY_CERT_STORE}/cert.pem \
+            -inkey ${OPENHAB_SYNOLOGY_CERT_STORE}/privkey.pem \
+            -out ${OPENHAB_SYNOLOGY_CERT_STORE}/openhab.p12 \
+            -name mykey \
+            -password pass:changeit
+
+        if [ $? -ne 0 ]
+        then
+            logger -p 0 "${PACKAGE_NAME}_${SCRIPT_NAME}: failed to create openHAB pkcs12 keystore from Synology default certificate."
+        fi
 
         # Import Synology certificate from pkcs12 keystore in to openHAB truststore
-        ${BIN_JAVA_KEYTOOL} -importkeystore -noprompt -deststorepass openhab -destkeypass openhab -destkeystore ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/keystore -srckeystore ${OPENHAB_SYNOLOGY_CERT_STORE}/openhab.p12 -srcstoretype PKCS12 -srcstorepass changeit -alias mykey &>/dev/null
+        ${BIN_JAVA_KEYTOOL} \
+            -importkeystore \
+            -noprompt \
+            -deststorepass openhab \
+            -destkeypass openhab \
+            -destkeystore ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/keystore \
+            -srckeystore ${OPENHAB_SYNOLOGY_CERT_STORE}/openhab.p12 \
+            -srcstoretype PKCS12 \
+            -srcstorepass changeit \
+            -alias mykey &>/dev/null
+
+	if [ $? -ne 0 ]
+        then
+            logger -p 0 "${PACKAGE_NAME}_${SCRIPT_NAME}: failed to import Synology certificate in openHAB truststore."
+        fi
 
         # Update permissions
         ${BIN_CHOWN} ${PACKAGE_NAME}:${PACKAGE_NAME} ${OPENHAB_SYNOLOGY_CERT_STORE}/openhab.p12

@@ -1,7 +1,4 @@
 {
-    "syslog-config": {
-        "logrotate-relpath": "etc/logrotate.d/openHAB"
-    },
     "certificate-config": {
         "services": [{
             "display_name": "openHAB",

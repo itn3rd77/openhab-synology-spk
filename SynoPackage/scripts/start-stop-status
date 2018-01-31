@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2017 Ingo Theiss <ingo.theiss@i-matrixx.de>
+# Copyright (c) 2018 Ingo Theiss <ingo.theiss@i-matrixx.de>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -56,14 +56,14 @@ do_start()
     while true
     do
         # If process is started, exit loop
-        ${OPENHAB_DAEMON} status &>/dev/null && return 0
+    ${BIN_PIDOF} -s ${OPENHAB_DAEMON} &>/dev/null && return 0
 
         # Process not running, sleep and wait
         sleep 1
         ((n++))
 
-        # After 20 seconds give up
-        if [ ${n} -eq 20 ]
+        # After 60 seconds give up
+        if [ ${n} -eq 60 ]
         then
             return 4
         fi
