@@ -2,7 +2,6 @@
 
 source /pkgscripts/include/pkg_util.sh
 
-cat <<EOF
 package="openHAB"
 displayname="openHAB"
 version="2.2.0-0004"
@@ -25,10 +24,6 @@ dsmappname="ORG.OPENHAB.Instance"
 description="openHAB - a vendor and technology agnostic open source automation software for your home."
 description_enu="openHAB - a vendor and technology agnostic open source automation software for your home."
 description_ger="openHAB - eine Hersteller- und technologieunabhängige Open-Source-Automatisierungssoftware für Ihr Zuhause."
-EOF
-#
-# Disabled until usage is documented.
-# @see https://github.com/SynologyOpenSource/pkgscripts-ng/issues/4
-#[ "$(caller)" != "0 NULL" ] && return 0
-#pkg_dump_info
-#
+
+[ "$(caller)" != "0 NULL" ] && return 0
+pkg_dump_info
