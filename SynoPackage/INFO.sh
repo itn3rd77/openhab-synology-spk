@@ -4,7 +4,6 @@ source /pkgscripts/include/pkg_util.sh
 
 build_number="$1"
 
-cat <<EOF
 package="openHAB"
 displayname="openHAB"
 version="2.3.0-${build_number}"
@@ -30,9 +29,6 @@ description_ger="openHAB - eine Hersteller- und technologieunabhängige Open-Sou
 create_time="$(date +%Y%m%d-%T)"
 toolkit_version="${DSM_BUILD_NUM}"
 EOF
-#
-# Disabled until usage is documented.
-# @see https://github.com/SynologyOpenSource/pkgscripts-ng/issues/4
-#[ "$(caller)" != "0 NULL" ] && return 0
-#pkg_dump_info
-#
+
+[ "$(caller)" != "0 NULL" ] && return 0
+pkg_dump_info
