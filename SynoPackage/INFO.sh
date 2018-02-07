@@ -28,7 +28,6 @@ description_enu="openHAB - a vendor and technology agnostic open source automati
 description_ger="openHAB - eine Hersteller- und technologieunabhängige Open-Source-Automatisierungssoftware für Ihr Zuhause."
 create_time="$(date +%Y%m%d-%T)"
 toolkit_version="${DSM_BUILD_NUM}"
-EOF
 
 [ "$(caller)" != "0 NULL" ] && return 0
 pkg_dump_info
