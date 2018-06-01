@@ -46,6 +46,9 @@ then
     ${BIN_CAT} ${PACKAGE_TARGET_LOCATION}/src/runtime/bin/userdata_sysfiles.lst | xargs rm -f
 fi
 
+# Keep a backup in case the user modified logging configuration
+${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/org.ops4j.pax.logging.cfg ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/org.ops4j.pax.logging.cfg.spk
+
 # Backup openHAB userdata directory
 ${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/userdata ${SYNOPKG_TEMP_UPGRADE_FOLDER}/userdata
 
@@ -55,8 +58,5 @@ then
     echo "Failed to backup openHAB userdate directory!" > ${SYNOPKG_TEMP_LOGFILE}
     exit 1
 fi
-
-# Keep a backup in case the user modified logging configuration
-${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/org.ops4j.pax.logging.cfg ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/org.ops4j.pax.logging.cfg.spk
 
 exit 0
