@@ -44,9 +44,6 @@ fi
 if [ -f "${PACKAGE_TARGET_LOCATION}/src/runtime/bin/userdata_sysfiles.lst" ]
 then
     ${BIN_CAT} ${PACKAGE_TARGET_LOCATION}/src/runtime/bin/userdata_sysfiles.lst | xargs rm -f
-else
-    logger -p 0 "${PACKAGE_NAME}_${SCRIPT_NAME}: The required package file >${PACKAGE_TARGET_LOCATION}/src/runtime/bin/userdata_sysfiles.lst< is not available. Upgrade failed!"
-    echo "The required package file >${PACKAGE_TARGET_LOCATION}/src/runtime/bin/userdata_sysfiles.lst< is not available. Upgrade failed!" > ${SYNOPKG_TEMP_LOGFILE}
 fi
 
 # Backup openHAB userdata directory
