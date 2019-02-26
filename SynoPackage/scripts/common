@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2018 Ingo Theiss <ingo.theiss@i-matrixx.de>
+# Copyright (c) 2018-2019 Ingo Theiss <ingo.theiss@i-matrixx.de>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,12 @@ PACKAGE_TARGET_LOCATION="${PACKAGE_LOCATION}/target"
 OPENHAB_SYNOLOGY_CERT_STORE="/usr/local/etc/certificate/openHAB/openhab"
 # openHAB environment settings from Synology DSM UI
 OPENHAB_SYNOLOGY_ENV="${PACKAGE_TARGET_LOCATION}/src/userdata/etc/synology.env"
+# Default HTTP port
+DEFAULT_OPENHAB_HTTP_PORT="48080"
+# Default HTTPS port
+DEFAULT_OPENHAB_HTTPS_PORT="48443"
+# Default HTTP listen address
+DEFAULT_OPENHAB_HTTP_ADDRESS="0.0.0.0" 
 # The executed script name
 SCRIPT_NAME="${0##*/}"
 
@@ -60,12 +66,13 @@ BIN_SERVICETOOL="/usr/syno/bin/servicetool"
 BIN_SYNOPKGCTL="/usr/syno/sbin/synopkgctl"
 BIN_SYNOSHARE="/usr/syno/sbin/synoshare"
 BIN_SYNOUSER="/usr/syno/sbin/synouser"
+BIN_SYNOPKGHELPER="/usr/syno/sbin/synopkghelper"
 
 ### Functions
 
-create_cert_keystore()
+function create_cert_keystore
 {
-    if [ -d ${OPENHAB_SYNOLOGY_CERT_STORE} ]
+    if [[ -d ${OPENHAB_SYNOLOGY_CERT_STORE} ]]
     then
         # Create a pkcs12 keystore with key and certificate. This step is necessary because keytool does not provide a functionality to import a private key to a keystore!
         ${BIN_OPENSSL} pkcs12 \
@@ -77,7 +84,7 @@ create_cert_keystore()
             -name mykey \
             -password pass:changeit
 
-        if [ $? -ne 0 ]
+        if [[ $? != 0 ]]
         then
             logger -p 0 "${PACKAGE_NAME}_${SCRIPT_NAME}: failed to create openHAB pkcs12 keystore from Synology default certificate."
         fi
@@ -94,7 +101,7 @@ create_cert_keystore()
             -srcstorepass changeit \
             -alias mykey &>/dev/null
 
-	if [ $? -ne 0 ]
+        if [[ $? != 0 ]]
         then
             logger -p 0 "${PACKAGE_NAME}_${SCRIPT_NAME}: failed to import Synology certificate in openHAB truststore."
         fi

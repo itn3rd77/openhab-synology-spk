@@ -39,7 +39,7 @@ case $1 in
         ${PACKAGE_SCRIPTS_LOCATION}/start-stop-status status
 
         # Restart openHAB if running
-        if [ $? -eq 0 ]
+        if [[ $? != 0 ]]
         then
             ${BIN_SYNOPKGCTL} stop ${PACKAGE_NAME} && ${BIN_SYNOPKGCTL} start ${PACKAGE_NAME}
         fi

@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2018 Ingo Theiss <ingo.theiss@i-matrixx.de>
+# Copyright (c) 2018-2019 Ingo Theiss <ingo.theiss@i-matrixx.de>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,10 @@
 
 # Restore openHAB userdata directory
 ${BIN_CP} -a ${SYNOPKG_TEMP_UPGRADE_FOLDER}/userdata/* ${PACKAGE_TARGET_LOCATION}/src/userdata
+
+### Restore and install port config
+${BIN_CP} -f ${SYNOPKG_TEMP_UPGRADE_FOLDER}/etc/openHAB.sc ${PACKAGE_TARGET_LOCATION}/etc/openHAB.sc
+${BIN_SERVICETOOL} --install-configure-file --package ${PACKAGE_TARGET_LOCATION}/etc/openHAB.sc
 
 ### Import Synology certificates into openHAB keystore
 create_cert_keystore

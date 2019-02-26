@@ -1,13 +1,39 @@
 [app]
-app_name        =   "openHAB Manager"
-app_description    =    "openHAB Manager"
+app_name = "openHAB Manager"
+app_description = "openHAB Manager"
 
-[main]
-http_port    =    "HTTP-Port"
-https_port    =    "HTTPS-Port"
-do_restart  =   "Restart"
+[network]
+network_ports_title = "Webserver ports"
+network_ports_desc = "openHAB has a built-in webserver. Your openHAB instance listens per default on port 48000 for HTTP and 48443 for HTTPS requests."
+network_ports_http = "HTTP-Port"
+network_ports_https = "HTTPS-Port"
+
+network_interfaces_title = "Network interfaces"
+network_interfaces_desc = "openHAB binds to the first available real network interface. If you want to limit access to only certain network interfaces you can change this below."
+network_interfaces_selection = "Interfaces"
+network_confirm_apply = "In order for the changes to take effect, a restart of openHAB is required. Are you sure you want to restart now?"
+
+[overview]
+overview_title = "openHAB version properties"
+overview_desc = "Below you will see the content of the <i>userdata/etc/version.properties</i> file of the openHAB distribution."
+version_properties_err = "Unable to read the file version.properties."
+
+[security]
+trust_ca_certs = "Install root certificate"
+trust_ca_certs_desc = "Select and upload a root certificate. The root certificate is added to a trust store and automaticly loaded after restart of your openHAB instance."
+trust_ca_certs_filebutton = "Root certificate"
+cacert_check_failed = "Certificate is not valid or could not be read."
+keytool_import_failed = "Import of the uploaded certificate in the Java trust store failed."
+delete_trust_store_desc = "Delete Java trust store and all root certificates"
+form_delete_trust_store = "Delete trust store"
+security_confirm_delete = "Are you sure to delete Java trust store and restart openHAB?"
+no_cacert_selected = "Please select a root certificate first."
 
 [message]
-err_equal_http_https    =   "HTTP and HTTPS cannot use the same port."
-form_apply              =   "Applying settings ..."
-form_apply_success      =   "Settings successfully applied."
+err_equal_http_https = "HTTP and HTTPS cannot use the same port."
+form_apply = "Applying settings ..."
+form_apply_ok = "Settings successfully applied."
+adminport_err = "Updating setting 'adminport' in INFO file failed."
+protocol_file_err = "Failed to update 'protocol_file' of openHAB."
+openhab_restart_err = "Failed to restart openHAB. Please check status."
+delete_cacert_err = "Failed to remove Java trust store."

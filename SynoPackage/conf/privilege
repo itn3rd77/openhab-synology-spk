@@ -1,5 +1,5 @@
 {
-    "defaults":{
+    "defaults": {
         "run-as": "package"
     },
     "username": "openHAB",
@@ -38,5 +38,5 @@
     },{
         "relpath": "usr/bin/ca_reload",
         "run-as": "root"
-    }] 
+    }]
 }

@@ -29,7 +29,7 @@
 # PKG_DIR is a working directory
 PKG_DIR="/tmp/_spk.tmp"
 # openHAB download URL
-DOWNLOAD_URL="https://openhab.ci.cloudbees.com/job/openHAB-Distribution/lastSuccessfulBuild/artifact/distributions/openhab/target/openhab-2.3.0-SNAPSHOT.tar.gz"
+DOWNLOAD_URL="https://dl.bintray.com/openhab/mvn/org/openhab/distro/openhab/2.4.0/openhab-2.4.0.tar.gz"
 # Build number for INFO: version
 build_number="nnnn"
 
@@ -42,13 +42,14 @@ build_number="nnnn"
 #     - configuration files
 #
 create_package_tgz() {
+set -x
     local inner_tarball_dir=/tmp/_inner_tarball
 
     # Clear directory
     rm -rf ${inner_tarball_dir} && mkdir ${inner_tarball_dir}
 
     # Download openHAB release tarball
-    wget --no-check-certificate --no-verbose ${DOWNLOAD_URL} -P ${PKG_DIR}
+    curl --insecure --location --silent --output "${PKG_DIR}/${DOWNLOAD_URL##*/}" --url "${DOWNLOAD_URL}"
 
     mkdir ${inner_tarball_dir}/src
     tar -xvzf ${PKG_DIR}/${DOWNLOAD_URL##*/} -C ${inner_tarball_dir}/src

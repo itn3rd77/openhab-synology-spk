@@ -6,5 +6,8 @@
             "service": "openhab"
         }],
         "reloader-relpath": "usr/bin/ca_reload"
-    }    
+    },
+    "port-config": {
+        "protocol-file": "etc/openHAB.sc"
+    }
 }

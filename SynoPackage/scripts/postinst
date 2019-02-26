@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2018 Ingo Theiss <ingo.theiss@i-matrixx.de>
+# Copyright (c) 2018-2019 Ingo Theiss <ingo.theiss@i-matrixx.de>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,9 @@
 # Source common definitions
 . $(dirname $0)/common
 
+### Install port config
+${BIN_SERVICETOOL} --install-configure-file --package ${PACKAGE_TARGET_LOCATION}/etc/openHAB.sc
+
 ### Create share for openHAB
 
 # Absolute path of the share
@@ -33,11 +36,11 @@ openhab_synoshare="$(${BIN_SERVICETOOL} --get-alive-volume)/${PACKAGE_NAME}"
 
 # Check if share exists
 ${BIN_SYNOSHARE} --get "${PACKAGE_NAME}" 2>&1 >/dev/null
-if [ $? -ne 0 ]
+if [[ $? != 0 ]]
 then
     # Create share
     ${BIN_SYNOSHARE} --add "${PACKAGE_NAME}" "" "${openhab_synoshare}" "" "" "" 0 0
-    if [ $? -ne 0 ]
+    if [[ $? != 0 ]]
     then
         logger -p 0 "${PACKAGE_NAME}_${SCRIPT_NAME}: failed to create ${PACKAGE_NAME} share"
         echo "Failed to create openHAB share!" > ${SYNOPKG_TEMP_LOGFILE}
@@ -46,7 +49,7 @@ then
 
     # Add permissions
     ${BIN_SYNOSHARE} --setuser ${PACKAGE_NAME} RW + ${PACKAGE_NAME},@administrators
-    if [ $? -ne 0 ]
+    if [[ $? != 0 ]]
     then
         logger -p 0 "${PACKAGE_NAME}_${SCRIPT_NAME}: failed to add permissions for openHAB share."
         echo "Failed to add permissions for openHAB share!" > ${SYNOPKG_TEMP_LOGFILE}
@@ -57,7 +60,7 @@ fi
 ### Copy and link file to openHAB share
 
 # Copy and link addons directory
-if [ -d ${openhab_synoshare}/addons ]
+if [[ -d ${openhab_synoshare}/addons ]]
 then
     ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/src/addons
 else
@@ -67,7 +70,7 @@ fi
 ${BIN_LN} -sf ${openhab_synoshare}/addons ${PACKAGE_TARGET_LOCATION}/src/addons
 
 # Copy and link conf directory
-if [ -d ${openhab_synoshare}/conf ]
+if [[ -d ${openhab_synoshare}/conf ]]
 then
     ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/src/conf
 else
@@ -77,7 +80,7 @@ fi
 ${BIN_LN} -sf ${openhab_synoshare}/conf ${PACKAGE_TARGET_LOCATION}/src/conf
 
 # Create and link logs directory
-if [ -d ${openhab_synoshare}/logs ]
+if [[ -d ${openhab_synoshare}/logs ]]
 then
     ${BIN_RM} -rf ${PACKAGE_TARGET_LOCATION}/src/userdata/logs
 else
@@ -89,33 +92,18 @@ fi
 ${BIN_LN} -sf ${openhab_synoshare}/logs ${PACKAGE_TARGET_LOCATION}/src/userdata/logs
 
 # Set openHAB environment from package-wizard
-if [ "${SYNOPKG_PKG_STATUS}" == "INSTALL" ]
+if [[ "${SYNOPKG_PKG_STATUS}" == "INSTALL" ]]
 then
-    printf 'export OPENHAB_HTTP_PORT="%s"\n' "${pkgwizard_http_port}" > ${OPENHAB_SYNOLOGY_ENV}
-    printf 'export OPENHAB_HTTPS_PORT="%s"\n' "${pkgwizard_https_port}" >> ${OPENHAB_SYNOLOGY_ENV}
+    printf 'export OPENHAB_HTTP_PORT="%s"\n' "${pkgwizard_http_port:-${DEFAULT_OPENHAB_HTTP_PORT}}" > ${OPENHAB_SYNOLOGY_ENV}
+    printf 'export OPENHAB_HTTPS_PORT="%s"\n' "${pkgwizard_https_port:-${DEFAULT_OPENHAB_HTTPS_PORT}}" >> ${OPENHAB_SYNOLOGY_ENV}
+    printf 'export OPENHAB_HTTP_ADDRESS="%s"\n' "${pkgwizard_inet_addr:-${DEFAULT_OPENHAB_HTTP_ADDRESS}}" >> ${OPENHAB_SYNOLOGY_ENV}
+    printf 'export JAVA_OPTS="${JAVA_OPTS_TRUSTSTORE}"' >> ${OPENHAB_SYNOLOGY_ENV}
 
     ${BIN_CHMOD} 644 ${OPENHAB_SYNOLOGY_ENV}
     ${BIN_CHOWN} ${PACKAGE_NAME}:${PACKAGE_NAME} ${OPENHAB_SYNOLOGY_ENV}
 
     # Change adminport inside INFO
     sed -i "s|adminport=\"\([0-9]*\)\"|adminport=\"${pkgwizard_https_port}\"|g" ${PACKAGE_LOCATION}/INFO
-
-    if [ "${pkgwizard_force_inet_addr}" == "true" ]
-    then
-        # Persist network address from wizard
-        grep -Fq "org.eclipse.smarthome.network:primaryAddress" ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
-
-        if [ $? -eq 0 ]
-        then
-            # Replace value with new value from wizard
-            sed -i "s|org.eclipse.smarthome.network:primaryAddress = \([0-9./]*\)|org.eclipse.smarthome.network:primaryAddress = ${pkgwizard_inet_addr}|g" ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
-        else
-            # Insert network settings
-            printf "\n################ NETWORK ####################\n\n" >> ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
-            printf "# The network address used by openHAB aka listen address\n#\n" >> ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
-            printf "org.eclipse.smarthome.network:primaryAddress = %s\n" "${pkgwizard_inet_addr}" >> ${PACKAGE_TARGET_LOCATION}/src/conf/services/runtime.cfg
-        fi
-    fi
 fi
 
 ### Import Synology certificates into openHAB keystore

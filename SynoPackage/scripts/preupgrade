@@ -2,7 +2,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2018 Ingo Theiss <ingo.theiss@i-matrixx.de>
+# Copyright (c) 2018-2019 Ingo Theiss <ingo.theiss@i-matrixx.de>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ ${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/userdata/etc/org.ops4j.pax.logging.cfg 
 
 # Backup openHAB userdata directory
 ${BIN_MV} ${PACKAGE_TARGET_LOCATION}/src/userdata ${SYNOPKG_TEMP_UPGRADE_FOLDER}/userdata
-if [ $? -ne 0 ]
+if [[ $? != 0 ]]
 then
     logger -p 0 "${PACKAGE_NAME}_${SCRIPT_NAME}: failed to backup openHAB userdata!"
     echo "Failed to backup openHAB userdate directory!" > ${SYNOPKG_TEMP_LOGFILE}

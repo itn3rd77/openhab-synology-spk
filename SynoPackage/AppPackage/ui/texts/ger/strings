@@ -1,13 +1,39 @@
 [app]
-app_name        =  "openHAB Manager"
-app_description =  "openHAB Manager"
+app_name = "openHAB Manager"
+app_description = "openHAB Manager"
 
-[main]
-http_port     = "HTTP-Port"
-https_port    = "HTTPS-Port"
-do_restart    = "Neustart"
+[network]
+network_ports_title = "Webserver Ports"
+network_ports_desc = "openHAB hat einen built-in Webserver. Deine openHAB Instanz empfängt per Default auf dem Port 48000 HTTP und auf Port 48443 HTTPS Requests."
+network_ports_http = "HTTP-Port"
+network_ports_https = "HTTPS-Port"
+
+network_interfaces_title = "Netzwerk-Interfaces"
+network_interfaces_desc = "openHAB bindet an das erste reale Netzwerk-Interfaces das erkannt wird. Wenn Du den Zugriff auf ein bestimmtes Netzwerk-Interfaces einschränken willst, kannst Du das im Folgenden tun."
+network_interfaces_selection = "Interfaces"
+network_confirm_apply = "Um die Änderungen durchzuführen ist ein Neustart von openHAB erforderlich. Soll der Neustart jetzt durchgeführt werden?"
+
+[overview]
+overview_title = "openHAB Versions-Informationen"
+overview_desc = "Nachfolgend siehst Du den Inhalt der Datei <i>userdata/etc/version.properties</i> deiner openHAB Distribution"
+version_properties_err = "Die Datei version.properties konnte nicht gelesen werden."
+
+[security]
+trust_ca_certs = "Installation eines Root Zertifikates"
+trust_ca_certs_desc = "Wähle ein Root Zertifikat aus und klicke 'Upload'. Das Root Zertifikat wird zu einem Java Trust-Store hinzugefügt und automatisch mit einem Neustart deiner openHAB Instanz geladen."
+trust_ca_certs_filebutton = "Root Zertifikat"
+cacert_check_failed = "Das Zertifikat konnte nicht validiert werden."
+keytool_import_failed = "Import des Zertifikates in den Java Trust-Store fehlgeschlagen."
+delete_trust_store_desc = "Den Java Trust-Store mit allen Root Zertifikaten löschen"
+form_delete_trust_store = "Trust-Store löschen"
+security_confirm_delete = "Soll der Java Trust-Store wirklich gelöscht werden und ein Neustart durchgeführt werden?"
+no_cacert_selected = "Bitte zuerst ein Root Zertifikat auswählen."
 
 [message]
-err_equal_http_https    =   "HTTP und HTTPS können nicht denselben Port verwenden."
-form_apply              =   "Speichere Einstellungen ..."
-form_apply_success      =   "Einstellungen erfolgreich übernommen."
+err_equal_http_https = "HTTP und HTTPS können nicht denselben Port verwenden."
+form_apply = "Speichere Einstellungen ..."
+form_apply_ok = "Einstellungen erfolgreich übernommen."
+adminport_err = "Aktualisierung der Einstellung 'adminport' in der INFO Datei fehlgeschlagen"
+protocol_file_err = "Update der Operation 'protocol_file' für openHAB fehlgeschlagen."
+openhab_restart_err = "Neustart von openHAB fehlgeschlagen. Bitte manuell den Status prüfen."
+delete_cacert_err = "Löschen des Java Trust-Store fehlgeschlagen."

@@ -12,17 +12,18 @@
             "grantPrivilege":"all",            
             "texts":"texts",            
             "depend":[
-                "ORG.OPENHAB.Manager",
-                "ORG.OPENHAB.SettingPanel"
+                "ORG.OPENHAB.Manager"
             ]
         },
         "ORG.OPENHAB.Manager":{
             "type":"lib",
             "title":"openHAB",
             "icon":"images\/PACKAGE_ICON_{0}.PNG",
-            "depend":[
-                "ORG.OPENHAB.SettingPanel"
-            ]
+			"depend":[
+				"ORG.OPENHAB.OverviewPanel",
+				"ORG.OPENHAB.NetworkPanel",
+				"ORG.OPENHAB.SecurityPanel"
+			]
         }
     }
 }
